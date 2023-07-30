@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+//redux
 import { useSelector, useDispatch } from 'react-redux'
+import { register } from '../features/auth/authSlice'
 //assets
 import { FaUser } from 'react-icons/fa'
 //components
@@ -16,8 +18,11 @@ function Register() {
 		password: '',
 		password2: '',
 	})
-	const [isLoading, setIsLoading] = useState(false)
+
 	const { name, email, password, password2 } = formData
+
+	//useSelector hook from redux to get access to certain data from state
+	const { isLoading } = useSelector(state => state.auth)
 
 	const onChange = e => {
 		setFormData(prevState => ({
@@ -32,22 +37,24 @@ function Register() {
 		if (password !== password2) {
 			toast.error('Passwords do not match')
 		} else {
+			//create object with data we want to use for registering user
 			const userData = {
 				name,
 				email,
 				password,
 			}
 
-			// dispatch(register(userData))
-			// 	.unwrap()
-			// 	.then(user => {
-			// 		// NOTE: by unwrapping the AsyncThunkAction we can navigate the user after
-			// 		// getting a good response from our API or catch the AsyncThunkAction
-			// 		// rejection to show an error message
-			// 		toast.success(`Registered new user - ${user.name}`)
-			// 		navigate('/')
-			// 	})
-			// 	.catch(toast.error)
+			//dispatch register action
+			dispatch(register(userData))
+				.unwrap()
+				.then(user => {
+					// NOTE: by unwrapping the AsyncThunkAction we can navigate the user after
+					// getting a good response from our API or catch the AsyncThunkAction
+					// rejection to show an error message
+					toast.success(`Registered new user - ${user.name}`)
+					navigate('/')
+				})
+				.catch(toast.error)
 		}
 	}
 

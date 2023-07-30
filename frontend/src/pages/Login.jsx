@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+//redux
+import { useSelector, useDispatch } from 'react-redux'
+import { login } from '../features/auth/authSlice'
 //assets
 import { FaSignInAlt } from 'react-icons/fa'
 //components
@@ -14,9 +16,9 @@ function Login() {
 		email: '',
 		password: '',
 	})
-	const [isLoading, setIsLoading] = useState(false)
-
 	const { email, password } = formData
+	//get loading from initial state
+	const { isLoading } = useSelector(state => state.auth)
 
 	const onChange = e => {
 		setFormData(prevState => ({
@@ -27,11 +29,22 @@ function Login() {
 
 	const onSubmit = e => {
 		e.preventDefault()
-
+		//construct user data from the form
 		const userData = {
 			email,
 			password,
 		}
+		//dispatch login action
+		dispatch(login(userData))
+			.unwrap()
+			.then(user => {
+				// NOTE: by unwrapping the AsyncThunkAction we can navigate the user after
+				// getting a good response from our API or catch the AsyncThunkAction
+				// rejection to show an error message
+				toast.success(`Logged in as ${user.name}`)
+				navigate('/')
+			})
+			.catch(toast.error)
 	}
 
 	if (isLoading) {
