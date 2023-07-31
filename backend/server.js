@@ -24,8 +24,11 @@ app.get('/', (req, res) => {
 	res.send('hello')
 })
 
-//use route created in routes
+//use route for users created in routes
 app.use('/api/users', require('./routes/userRoutes'))
+
+//use route for tickets created in routes
+app.use('/api/tickets', require('./routes/ticketRoutes'))
 
 //allow app to use errorHandler
 app.use(errorHandler)
